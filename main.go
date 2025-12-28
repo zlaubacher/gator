@@ -3,26 +3,39 @@ package main
 import (
 	"fmt"
 	"gator/internal/config"
+	"os"
 )
 
 func main() {
-	cfg1, err := config.Read()
+	cfg, err := config.Read()
 	if err != nil {
 		fmt.Println("error reading file:", err)
 		return
 	}
 
-	err = cfg1.SetUser("Zach")
-	if err != nil {
-		fmt.Println("error setting user:", err)
-		return
+	s := &state{config: &cfg}
+
+	cmds := commands{registeredCommands: make(map[string]func(*state, command) error),}
+	cmds.register("login", handlerLogin)
+
+	args := os.Args
+
+	if len(args) < 2 {
+		fmt.Println("insufficient inputs. gator <command> <arguments>")
+		os.Exit(1)
 	}
 
-	cfg2, err := config.Read()
-	if err != nil {
-		fmt.Println("error reading file:", err)
-		return
+	cmdName := args[1]
+	cmdArguments := args[2:]
+
+	cmd := command{
+		Name: cmdName,
+		Args: cmdArguments,
 	}
 
-	fmt.Println(cfg2)
+	err = cmds.run(s, cmd)
+	if err != nil {
+		fmt.Println("error:", err)
+		os.Exit(1)
+	}
 }
