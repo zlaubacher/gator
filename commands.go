@@ -4,10 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"gator/internal/config"
+	"gator/internal/database"
 )
 
 type state struct {
-	config *config.Config
+	config   *config.Config
+	database *database.Queries
 }
 
 type command struct {
