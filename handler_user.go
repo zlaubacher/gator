@@ -35,3 +35,26 @@ func handlerReset(s *state, cmd command) error {
 	fmt.Println("database successfully deleted")
 	return nil
 }
+
+func handlerGetUsers(s *state, cmd command) error {
+	users, err := s.database.GetUsers(context.Background())
+	if err != nil {
+		fmt.Println("error retrieving users:", err)
+		return err
+	}
+
+	if len(users) == 0 {
+		fmt.Println("there are no registered users")
+		return nil
+	}
+
+	for _, u := range users {
+		line := "* " + u.Name
+		if u.Name == s.config.CurrentUserName {
+			line += " (current)"
+		}
+		fmt.Println(line)
+	}
+
+	return nil
+}
