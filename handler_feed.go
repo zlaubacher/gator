@@ -46,3 +46,18 @@ func handlerFeed(s *state, cmd command) error {
 
 	return nil
 }
+
+func handlerFeeds(s *state, cmd command) error {
+	feeds, err := s.database.GetFeedsWithUsers(context.Background())
+	if err != nil {
+		return fmt.Errorf("error retrieving feeds: %w", err)
+	}
+
+	for _, feed := range feeds {
+		fmt.Printf("Feed: %s\n", feed.Name)
+		fmt.Printf("URL: %s\n", feed.Url)
+		fmt.Printf("Username: %s\n", feed.Name_2)
+	}
+
+	return nil
+}
