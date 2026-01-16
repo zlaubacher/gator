@@ -44,3 +44,26 @@ func handlerFollow(s *state, cmd command) error {
 
 	return nil
 }
+
+func handlerFollowing(s *state, cmd command) error {
+	if len(cmd.Args) != 0 {
+		return fmt.Errorf("following command does not use args")
+	}
+
+	currentUserName := s.config.CurrentUserName
+	user, err := s.database.GetUser(context.Background(), currentUserName)
+	if err != nil {
+		return fmt.Errorf("error retrieving user: %w", err)
+	}
+
+	feedFollows, err := s.database.GetFeedFollowsForUser(context.Background(), user.ID)
+	if err != nil {
+		return fmt.Errorf("error retrieving followed feeds: %w", err)
+	}
+
+	for _, f := range feedFollows {
+		fmt.Println(f.FeedName)
+	}
+
+	return nil
+}
